@@ -29,15 +29,15 @@ public class CharacterMovement : MonoBehaviour
             moveInput = Vector2.zero;
         }
     }
-    public void OnVoice(InputAction.CallbackContext context)
-    {
-        // 키를 눌렀을 때만 실행
-        if (context.performed)
-        {
-            Debug.Log("Voice Action Triggered!");
-            StartCoroutine(SendOptimizationRequest(5));  // 서버 요청
-        }
-    }
+    // public void OnVoice(InputAction.CallbackContext context)
+    // {
+    //     // 키를 눌렀을 때만 실행
+    //     if (context.performed)
+    //     {
+    //         Debug.Log("Voice Action Triggered!");
+    //         StartCoroutine(SendOptimizationRequest(5));  // 서버 요청
+    //     }
+    // }
 
     void FixedUpdate()
     {
