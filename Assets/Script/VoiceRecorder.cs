@@ -4,7 +4,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using Samples.Whisper;
 using OpenAI;
-
+using Newtonsoft.Json;
+using System.Text;
 public class VoiceRecorder : MonoBehaviour
 {
     private string serverUrl = "http://127.0.0.1:5001/upload_text";
@@ -83,32 +84,41 @@ public class VoiceRecorder : MonoBehaviour
             resText = res.Text;
 
             Debug.Log("Transcription result: " + resText);
-
+            Vector3 currentColor = new Vector3(125, 125, 125);
             // 서버로 텍스트 전송
-            StartCoroutine(SendTextToServer(resText));
+            StartCoroutine(SendTextToServer(resText, currentColor));
         }
     }
 
-    private IEnumerator SendTextToServer(string text)
+    private IEnumerator SendTextToServer(string userText, Vector3 currentRGB)
+{
+    // Unity에서 전송할 데이터 생성
+    var jsonData = new
     {
-        string jsonData = JsonUtility.ToJson(new { transcribed_text = text });
-        using (UnityWebRequest request = new UnityWebRequest(serverUrl, "POST"))
+        text = userText,
+        current_rgb = new float[] { 255, 122, 30 }
+    };
+    string jsonString = JsonConvert.SerializeObject(jsonData);
+    Debug.Log("Serialized JSON: " + jsonString);
+
+    using (UnityWebRequest request = new UnityWebRequest("http://127.0.0.1:5001/upload_text", "POST"))
         {
-            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
+            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonString);
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Content-Type", "application/json"); // JSON 형식 명시
 
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log("Text sent successfully to server!");
+                Debug.Log("Response from server: " + request.downloadHandler.text);
             }
             else
             {
                 Debug.LogError("Failed to send text to server: " + request.error);
+                Debug.LogError("Request Data: " + jsonString); // 보낸 데이터 출력
             }
         }
-    }
+}
 }
