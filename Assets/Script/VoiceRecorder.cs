@@ -304,12 +304,11 @@ private IEnumerator SendRGBListToServerAndUpdate()
                 rgbList.Clear();
                 foreach (var rgb in responseData.suggested_rgb)
                 {
-                    rgbList.Add(new Vector3(
-                        rgb[0], // R
-                        rgb[1], // G
-                        rgb[2]  // B
-                    ));
+                    rgbList.Add(new Vector3(rgb[0] / 255f, rgb[1] / 255f, rgb[2] / 255f));
                 }
+
+                currentIndex = 0; // 리스트의 첫 번째 값을 초기화
+                ApplyColorFromJson(); // 첫 번째 값을 적용
 
                 Debug.Log("RGB list updated from server response.");
             }
