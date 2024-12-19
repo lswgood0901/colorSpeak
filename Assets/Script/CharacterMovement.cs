@@ -11,11 +11,16 @@ public class CharacterMovement : MonoBehaviour
     public float rotationSpeed = 180f; // 회전 속도
 
     private Vector2 moveInput;
-    
+    private Rigidbody rb; // Rigidbody 추가
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>(); // Rigidbody 가져오기
+    }
 
     public void OnMove(InputAction.CallbackContext context)
     {
-       if (context.performed || context.started)
+        if (context.performed || context.started)
         {
             moveInput = context.ReadValue<Vector2>(); // 입력 값 가져오기
         }
@@ -34,16 +39,18 @@ public class CharacterMovement : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
         // "앞뒤" 이동 처리 (W/S 키)
-        float moveForward = moveInput.y * moveSpeed * Time.deltaTime;
-        transform.Translate(Vector3.forward * moveForward);
+        Vector3 moveDirection = transform.forward * moveInput.y * moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + moveDirection); // Rigidbody를 통한 이동 처리
 
         // "좌우" 회전 처리 (A/D 키)
-        float rotateAmount = moveInput.x * rotationSpeed * Time.deltaTime;
-        transform.Rotate(Vector3.up, rotateAmount);
+        float rotateAmount = moveInput.x * rotationSpeed * Time.fixedDeltaTime;
+        Quaternion rotation = Quaternion.Euler(0f, rotateAmount, 0f);
+        rb.MoveRotation(rb.rotation * rotation); // Rigidbody를 통한 회전 처리
     }
+
     IEnumerator SendOptimizationRequest(float x)
     {
         // JSON 데이터 생성
@@ -93,4 +100,3 @@ public class CharacterMovement : MonoBehaviour
         public float optimized_value;
     }
 }
-
