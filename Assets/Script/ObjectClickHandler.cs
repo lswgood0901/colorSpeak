@@ -9,6 +9,11 @@ public class ObjectClickHandler : MonoBehaviour
 
     void Update()
     {
+        if (uiManager != null && uiManager.isPanelActive)
+        {
+            return; // 아무 작업도 하지 않음
+        }
+        
         if (Input.GetMouseButtonDown(0)) // 마우스 왼쪽 버튼 클릭
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); // 마우스 위치에서 Ray 발사
@@ -27,5 +32,4 @@ public class ObjectClickHandler : MonoBehaviour
             }
         }
     }
-    
 }

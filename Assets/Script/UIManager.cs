@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
 {
     public GameObject colorOptionPanel; // UI 창 (colorOptionPanel)
     public TextMeshProUGUI titleText; // Panel의 제목 (제목 TextMeshPro)
+    public bool isPanelActive = false; // UI 창 활성화 상태
 
     void Start()
     {
@@ -18,23 +19,25 @@ public class UIManager : MonoBehaviour
     {
         if (clickedObject != null)
         {
-            // ObjectInfo 스크립트를 통해 오브젝트 제목 가져오기
             ObjectInfo objectInfo = clickedObject.GetComponent<ObjectInfo>();
             if (objectInfo != null)
             {
-                titleText.text = objectInfo.objectTitle; // 패널 제목 설정
+                Debug.Log("Object Title: " + objectInfo.objectTitle); // 디버그 메시지
+                titleText.text = objectInfo.objectTitle; // Title Text에 오브젝트 이름 설정
             }
             else
             {
-                titleText.text = "Unknown Object"; // ObjectInfo가 없을 경우 기본값
+                Debug.LogWarning("ObjectInfo is missing on: " + clickedObject.name);
+                titleText.text = "Unknown Object"; // 기본값 설정
             }
         }
 
-        colorOptionPanel.SetActive(true); // 패널 활성화
+        colorOptionPanel.SetActive(true); // Canvas 패널 활성화
+        isPanelActive = true; // Panel 활성화 상태 업데이트
     }
-
     public void HidePanel()
     {
         colorOptionPanel.SetActive(false); // Panel 비활성화
+        isPanelActive = false; // Panel 활성화 상태 업데이트
     }
 }
